@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>简易网盘界面</title>
+    <link rel="stylesheet" href="pan.css">
+</head>
+<body>
+    <div class="header">
+        <input type="file" id="fileInput" multiple style="display:none;" onchange="addFiles()">
+        <button onclick="document.getElementById('fileInput').click()">上传文件</button>
+        <button onclick="downloadFile()">下载选中文件</button>
+        <button onclick="deleteFile()">删除选中文件</button>
+    </div>
+    <div class="file-container">
+        <table id="fileTable">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" onchange="toggleAll(this)"></th>
+                    <th>文件名</th>
+                    <th>上传日期</th>
+                    <th>大小</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 文件将被动态添加到这里 -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function addFiles() {
+            const files = document.getElementById('fileInput').files;
+            const table = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+            Array.from(files).forEach(file => {
+                const row = table.insertRow();
+                const cellSelect = row.insertCell(0);
+                const cellName = row.insertCell(1);
+                const cellDate = row.insertCell(2);
+                const cellSize = row.insertCell(3);
+                const cellActions = row.insertCell(4);
+
+                cellSelect.innerHTML = '<input type="checkbox">';
+                cellName.textContent = file.name;
+                cellDate.textContent = new Date().toISOString().slice(0, 10);
+                cellSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                cellActions.innerHTML = '<button onclick="alert(\'Download ' + file.name + '\')">下载</button>' + 
+                                        '<button onclick="this.parentNode.parentNode.remove()">删除</button>';
+            });
+        }
+
+        function toggleAll(source) {
+            const checkboxes = document.querySelectorAll('#fileTable tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = source.checked;
+            });
+        }
+
+        function downloadFile() {
+            // 下载逻辑（这里仅演示）
+            alert('下载选中文件功能需要服务器支持');
+        }
+
+        function deleteFile() {
+            // 删除逻辑（这里仅前端删除行）
+            document.querySelectorAll('#fileTable tbody input[type="checkbox"]:checked').forEach(checkbox => {
+                checkbox.closest('tr').remove();
+            });
+        }
+    </script>
+</body>
+</html>
